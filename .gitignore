@@ -1,0 +1,157 @@
+# =============================================================================
+# MiniERP — root .gitignore (Flutter + NestJS monorepo)
+# Paths: mini_erp_app/ (Flutter) · mini_erp_backend/ (NestJS)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Secrets & local environment
+# Keep .env.example (and similar templates) tracked.
+# -----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# -----------------------------------------------------------------------------
+# Flutter / Dart (mini_erp_app)
+# Do NOT ignore pubspec.lock
+# -----------------------------------------------------------------------------
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+**/doc/api/
+**/ios/Flutter/.last_build_id
+*.dart.js
+*.js_
+*.js.deps
+*.js.map
+app.*.symbols
+app.*.map.json
+
+# -----------------------------------------------------------------------------
+# Build outputs (Flutter + Nest / general)
+# -----------------------------------------------------------------------------
+build/
+dist/
+coverage/
+.nyc_output/
+.temp/
+.tmp/
+
+# -----------------------------------------------------------------------------
+# Android (mini_erp_app/android)
+# Do NOT ignore gradle wrapper (gradlew / gradle-wrapper.jar) at repo root rules
+# -----------------------------------------------------------------------------
+.gradle/
+**/android/local.properties
+**/android/**/captures/
+**/android/.cxx/
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+key.properties
+*.keystore
+*.jks
+
+# -----------------------------------------------------------------------------
+# iOS / macOS (for when ios/ is generated)
+# -----------------------------------------------------------------------------
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/macos/Flutter/ephemeral/
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+**/linux/flutter/ephemeral/
+**/windows/flutter/ephemeral/
+*.mode1v3
+*.mode2v3
+*.moved-aside
+*.pbxuser
+*.perspectivev3
+xcuserdata/
+**/DerivedData/
+**/Pods/
+
+# -----------------------------------------------------------------------------
+# NestJS / Node.js (mini_erp_backend)
+# Do NOT ignore package-lock.json
+# -----------------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+pids/
+*.pid
+*.seed
+*.pid.lock
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Local Nest/test helpers (already used in backend)
+**/test/mongo-uri.txt
+
+# -----------------------------------------------------------------------------
+# Docker — local secrets only
+# Do NOT ignore Dockerfile, docker-compose.yml, or project Docker config
+# -----------------------------------------------------------------------------
+*.env.docker
+docker-compose.override.yml
+docker-compose.*.local.yml
+docker-compose.local.yml
+
+# -----------------------------------------------------------------------------
+# Editors & IDEs
+# -----------------------------------------------------------------------------
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# VS Code — ignore local workspace junk; keep shared team configs if present
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# -----------------------------------------------------------------------------
+# Operating systems
+# -----------------------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.tmp
+*.temp
+*.log
+logs/
+.history/
+.svn/
+.atom/
+.buildlog/
+migrate_working_dir/

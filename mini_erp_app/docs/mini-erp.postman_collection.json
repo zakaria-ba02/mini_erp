@@ -1,0 +1,632 @@
+{
+    "info": {
+      "_postman_id": "mini-erp-api-collection",
+      "name": "Mini ERP API",
+      "description": "Postman collection for Mini ERP NestJS backend.\n\n## Setup\n1. Import `mini-erp.postman_environment.json`\n2. Set `adminUsername` and `adminPassword` in the environment (from your `.env` ADMIN_SEED_* values)\n3. Run **Auth → Login (Admin)** — tokens are saved automatically\n4. Use other folders; IDs are auto-saved where possible\n\nSwagger (dev only): http://localhost:3000/docs",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+      "type": "bearer",
+      "bearer": [
+        {
+          "key": "token",
+          "value": "{{accessToken}}",
+          "type": "string"
+        }
+      ]
+    },
+    "item": [
+      {
+        "name": "Health",
+        "item": [
+          {
+            "name": "Health Check",
+            "request": {
+              "auth": { "type": "noauth" },
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/health",
+                "host": ["{{baseUrl}}"],
+                "path": ["health"]
+              },
+              "description": "Public endpoint — no JWT required."
+            }
+          }
+        ]
+      },
+      {
+        "name": "Auth",
+        "item": [
+          {
+            "name": "Login (Admin)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "type": "text/javascript",
+                  "exec": [
+                    "if (pm.response.code === 201) {",
+                    "  const body = pm.response.json();",
+                    "  pm.environment.set('accessToken', body.accessToken);",
+                    "  pm.environment.set('refreshToken', body.refreshToken);",
+                    "  pm.test('Login successful', () => {",
+                    "    pm.expect(body.accessToken).to.be.a('string');",
+                    "    pm.expect(body.refreshToken).to.be.a('string');",
+                    "  });",
+                    "}"
+                  ]
+                }
+              }
+            ],
+            "request": {
+              "auth": { "type": "noauth" },
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"username\": \"{{adminUsername}}\",\n  \"password\": \"{{adminPassword}}\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/auth/login",
+                "host": ["{{baseUrl}}"],
+                "path": ["auth", "login"]
+              }
+            }
+          },
+          {
+            "name": "Login (Customer)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "type": "text/javascript",
+                  "exec": [
+                    "if (pm.response.code === 201) {",
+                    "  const body = pm.response.json();",
+                    "  pm.environment.set('accessToken', body.accessToken);",
+                    "  pm.environment.set('refreshToken', body.refreshToken);",
+                    "}"
+                  ]
+                }
+              }
+            ],
+            "request": {
+              "auth": { "type": "noauth" },
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"username\": \"customer1\",\n  \"password\": \"customer123456\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/auth/login",
+                "host": ["{{baseUrl}}"],
+                "path": ["auth", "login"]
+              },
+              "description": "Use credentials from a customer account created via POST /customers."
+            }
+          },
+          {
+            "name": "Refresh Token",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "type": "text/javascript",
+                  "exec": [
+                    "if (pm.response.code === 201) {",
+                    "  const body = pm.response.json();",
+                    "  pm.environment.set('accessToken', body.accessToken);",
+                    "  pm.environment.set('refreshToken', body.refreshToken);",
+                    "}"
+                  ]
+                }
+              }
+            ],
+            "request": {
+              "auth": { "type": "noauth" },
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/auth/refresh",
+                "host": ["{{baseUrl}}"],
+                "path": ["auth", "refresh"]
+              }
+            }
+          },
+          {
+            "name": "Logout",
+            "request": {
+              "method": "POST",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/auth/logout",
+                "host": ["{{baseUrl}}"],
+                "path": ["auth", "logout"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Customers",
+        "description": "Admin only",
+        "item": [
+          {
+            "name": "Create Customer",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "type": "text/javascript",
+                  "exec": [
+                    "if (pm.response.code === 201) {",
+                    "  const body = pm.response.json();",
+                    "  if (body.customer && body.customer._id) {",
+                    "    pm.environment.set('customerId', body.customer._id);",
+                    "  }",
+                    "}"
+                  ]
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"name\": \"Acme Corp\",\n  \"phone\": \"0500000000\",\n  \"notes\": \"VIP customer\",\n  \"account\": {\n    \"username\": \"customer1\",\n    \"password\": \"customer123456\"\n  }\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/customers",
+                "host": ["{{baseUrl}}"],
+                "path": ["customers"]
+              }
+            }
+          },
+          {
+            "name": "List Customers",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/customers?page=1&limit=20&search=",
+                "host": ["{{baseUrl}}"],
+                "path": ["customers"],
+                "query": [
+                  { "key": "page", "value": "1" },
+                  { "key": "limit", "value": "20" },
+                  { "key": "search", "value": "" }
+                ]
+              }
+            }
+          },
+          {
+            "name": "Get Customer by ID",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/customers/{{customerId}}",
+                "host": ["{{baseUrl}}"],
+                "path": ["customers", "{{customerId}}"]
+              }
+            }
+          },
+          {
+            "name": "Update Customer",
+            "request": {
+              "method": "PATCH",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"name\": \"Acme Corp Updated\",\n  \"phone\": \"0500000001\",\n  \"notes\": \"Updated notes\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/customers/{{customerId}}",
+                "host": ["{{baseUrl}}"],
+                "path": ["customers", "{{customerId}}"]
+              }
+            }
+          },
+          {
+            "name": "Reset Customer Password",
+            "request": {
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"newPassword\": \"newpassword123\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/customers/{{customerId}}/reset-password",
+                "host": ["{{baseUrl}}"],
+                "path": ["customers", "{{customerId}}", "reset-password"]
+              }
+            }
+          },
+          {
+            "name": "Delete Customer (Soft)",
+            "request": {
+              "method": "DELETE",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/customers/{{customerId}}",
+                "host": ["{{baseUrl}}"],
+                "path": ["customers", "{{customerId}}"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Costing",
+        "description": "Admin only",
+        "item": [
+          {
+            "name": "Create Cost",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "type": "text/javascript",
+                  "exec": [
+                    "if (pm.response.code === 201) {",
+                    "  const body = pm.response.json();",
+                    "  if (body._id) pm.environment.set('costId', body._id);",
+                    "}"
+                  ]
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"name\": \"Board A\",\n  \"runtime\": 2,\n  \"hourlyRate\": 50,\n  \"boardPrice\": 100,\n  \"quantity\": 10,\n  \"wastePercentage\": 10,\n  \"profitPercentage\": 20,\n  \"additionalCosts\": [\n    { \"name\": \"Glue\", \"price\": 30 }\n  ]\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/costing",
+                "host": ["{{baseUrl}}"],
+                "path": ["costing"]
+              }
+            }
+          },
+          {
+            "name": "List Costs",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/costing?page=1&limit=20&search=",
+                "host": ["{{baseUrl}}"],
+                "path": ["costing"],
+                "query": [
+                  { "key": "page", "value": "1" },
+                  { "key": "limit", "value": "20" },
+                  { "key": "search", "value": "" }
+                ]
+              }
+            }
+          },
+          {
+            "name": "Get Cost by ID",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/costing/{{costId}}",
+                "host": ["{{baseUrl}}"],
+                "path": ["costing", "{{costId}}"]
+              }
+            }
+          },
+          {
+            "name": "Update Cost",
+            "request": {
+              "method": "PATCH",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"name\": \"Board A (Updated)\",\n  \"runtime\": 2.5,\n  \"profitPercentage\": 25\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/costing/{{costId}}",
+                "host": ["{{baseUrl}}"],
+                "path": ["costing", "{{costId}}"]
+              }
+            }
+          },
+          {
+            "name": "Delete Cost (Soft)",
+            "request": {
+              "method": "DELETE",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/costing/{{costId}}",
+                "host": ["{{baseUrl}}"],
+                "path": ["costing", "{{costId}}"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Invoices",
+        "item": [
+          {
+            "name": "Create Invoice (Admin)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "type": "text/javascript",
+                  "exec": [
+                    "if (pm.response.code === 201) {",
+                    "  const body = pm.response.json();",
+                    "  if (body._id) pm.environment.set('invoiceId', body._id);",
+                    "}"
+                  ]
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"customerId\": \"{{customerId}}\",\n  \"date\": \"2026-08-11T00:00:00.000Z\",\n  \"items\": [\n    {\n      \"costId\": \"{{costId}}\",\n      \"quantity\": 2,\n      \"unitPrice\": 50\n    },\n    {\n      \"name\": \"Manual item\",\n      \"quantity\": 1,\n      \"unitPrice\": 25\n    }\n  ]\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/invoices",
+                "host": ["{{baseUrl}}"],
+                "path": ["invoices"]
+              },
+              "description": "Admin only. For cost-linked items, name is resolved server-side from costId."
+            }
+          },
+          {
+            "name": "List Invoices",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/invoices?page=1&limit=20",
+                "host": ["{{baseUrl}}"],
+                "path": ["invoices"],
+                "query": [
+                  { "key": "page", "value": "1" },
+                  { "key": "limit", "value": "20" },
+                  { "key": "customerId", "value": "{{customerId}}", "disabled": true },
+                  { "key": "status", "value": "unpaid", "disabled": true },
+                  { "key": "fromDate", "value": "2026-01-01T00:00:00.000Z", "disabled": true },
+                  { "key": "toDate", "value": "2026-12-31T23:59:59.999Z", "disabled": true }
+                ]
+              },
+              "description": "Admin: all invoices. Customer: own invoices only (JWT)."
+            }
+          },
+          {
+            "name": "Get Invoice by ID",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/invoices/{{invoiceId}}",
+                "host": ["{{baseUrl}}"],
+                "path": ["invoices", "{{invoiceId}}"]
+              }
+            }
+          },
+          {
+            "name": "Update Invoice (Admin)",
+            "request": {
+              "method": "PATCH",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"status\": \"partial\",\n  \"items\": [\n    {\n      \"name\": \"Manual item updated\",\n      \"quantity\": 3,\n      \"unitPrice\": 40\n    }\n  ]\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/invoices/{{invoiceId}}",
+                "host": ["{{baseUrl}}"],
+                "path": ["invoices", "{{invoiceId}}"]
+              }
+            }
+          },
+          {
+            "name": "Delete Invoice (Soft, Admin)",
+            "request": {
+              "method": "DELETE",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/invoices/{{invoiceId}}",
+                "host": ["{{baseUrl}}"],
+                "path": ["invoices", "{{invoiceId}}"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Payments",
+        "item": [
+          {
+            "name": "Create Payment (Admin)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "type": "text/javascript",
+                  "exec": [
+                    "if (pm.response.code === 201) {",
+                    "  const body = pm.response.json();",
+                    "  if (body._id) pm.environment.set('paymentId', body._id);",
+                    "}"
+                  ]
+                }
+              }
+            ],
+            "request": {
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"customerId\": \"{{customerId}}\",\n  \"amount\": 100,\n  \"date\": \"2026-08-11T00:00:00.000Z\",\n  \"method\": \"cash\",\n  \"notes\": \"Partial payment\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/payments",
+                "host": ["{{baseUrl}}"],
+                "path": ["payments"]
+              }
+            }
+          },
+          {
+            "name": "List Payments",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/payments?page=1&limit=20",
+                "host": ["{{baseUrl}}"],
+                "path": ["payments"],
+                "query": [
+                  { "key": "page", "value": "1" },
+                  { "key": "limit", "value": "20" },
+                  { "key": "customerId", "value": "{{customerId}}", "disabled": true },
+                  { "key": "fromDate", "value": "2026-01-01T00:00:00.000Z", "disabled": true },
+                  { "key": "toDate", "value": "2026-12-31T23:59:59.999Z", "disabled": true }
+                ]
+              }
+            }
+          },
+          {
+            "name": "Get Payment by ID",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/payments/{{paymentId}}",
+                "host": ["{{baseUrl}}"],
+                "path": ["payments", "{{paymentId}}"]
+              }
+            }
+          },
+          {
+            "name": "Update Payment (Admin)",
+            "request": {
+              "method": "PATCH",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"amount\": 120,\n  \"method\": \"bank_transfer\",\n  \"notes\": \"Updated payment\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/payments/{{paymentId}}",
+                "host": ["{{baseUrl}}"],
+                "path": ["payments", "{{paymentId}}"]
+              }
+            }
+          },
+          {
+            "name": "Delete Payment (Soft, Admin)",
+            "request": {
+              "method": "DELETE",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/payments/{{paymentId}}",
+                "host": ["{{baseUrl}}"],
+                "path": ["payments", "{{paymentId}}"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Audit Logs",
+        "description": "Admin only",
+        "item": [
+          {
+            "name": "List Audit Logs",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/audit-logs?page=1&limit=20",
+                "host": ["{{baseUrl}}"],
+                "path": ["audit-logs"],
+                "query": [
+                  { "key": "page", "value": "1" },
+                  { "key": "limit", "value": "20" },
+                  { "key": "entity", "value": "Invoice", "disabled": true },
+                  { "key": "userId", "value": "", "disabled": true },
+                  { "key": "fromDate", "value": "2026-01-01T00:00:00.000Z", "disabled": true },
+                  { "key": "toDate", "value": "2026-12-31T23:59:59.999Z", "disabled": true }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Users",
+        "item": [
+          {
+            "name": "Create User (Admin)",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "type": "text/javascript",
+                  "exec": [
+                    "if (pm.response.code === 201) {",
+                    "  const body = pm.response.json();",
+                    "  if (body.username) pm.environment.set('adminUsername', body.username);",
+                    "}"
+                  ]
+                }
+              }
+            ],
+            "request": {
+              "auth": { "type": "noauth" },
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"username\": \"Admin9999\",\n  \"password\": \"@0945175182\",\n  \"role\": \"admin\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/users",
+                "host": ["{{baseUrl}}"],
+                "path": ["users"]
+              },
+              "description": "Creates a user. If no active admin exists, the first admin can be created without a JWT. After that, this endpoint requires an admin token. Body: username, password (min 8), role (admin|customer)."
+            }
+          },
+          {
+            "name": "Update My FCM Token",
+            "request": {
+              "method": "PATCH",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"fcmToken\": \"your-fcm-device-token-here\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/users/me/fcm-token",
+                "host": ["{{baseUrl}}"],
+                "path": ["users", "me", "fcm-token"]
+              },
+              "description": "Authenticated user (admin or customer)."
+            }
+          }
+        ]
+      }
+    ]
+  }

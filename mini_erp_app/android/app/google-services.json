@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "804088689471",
+    "project_id": "mini-erp-d31bd",
+    "storage_bucket": "mini-erp-d31bd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804088689471:android:e3e9d428a2ad949b91598a",
+        "android_client_info": {
+          "package_name": "com.example.mini_erp_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBS_S5KxGTbOizuCHeJEtpk8eF0EAPWvto"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
